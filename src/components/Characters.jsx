@@ -15,23 +15,23 @@ export const Characters = () => {
         const fetchData = async () => {
             try {
 
-                 // Realizar la petición a la API
-               const response = await axios.get(urlAPI);
-                
-                     // Obtener los datos de la petición
+                // Realizar la petición a la API
+                const response = await axios.get(urlAPI);
+
+                // Obtener los datos de la petición
                 const data = response.data.results;
 
-                     // Actualizar la variable de estado con los datos recibidos de la API.
+                // Actualizar la variable de estado con los datos recibidos de la API.
                 setCharactersArray(data);
                 setNextPage(response.data.info.next);
                 setPrevPage(response.data.info.prev);
 
-             } catch (error) {
-                 console.error("Error al consultar los datos de la API: ", error);
-             }
+            } catch (error) {
+                console.error("Error al consultar los datos de la API: ", error);
+            }
         };
         fetchData();
-    }, []); // Array de depencias vacío para que useEffect se ejecute una vez
+    }, [urlAPI]); // Dependencia urlAPI para que useEffect se ejecute cuando cambie
 
     console.log("url", nextPage);
     //useEffect(() => {
@@ -45,11 +45,13 @@ export const Characters = () => {
     //    }
 
     //}, []);
-    const linkPagePrev = (url) => {
+
+    // Modificación para retornar otra función para que la URL de la API se actualice solo cuando el usuario hace clic en los enlaces de paginación "Anterior" y "Siguiente", en lugar de ejecutarse automáticamente al renderizar el componente.
+    const linkPagePrev = (url) => () => {
         setUrlAPI(url);
     };
 
-    const linkPageNext = (url) => {
+    const linkPageNext = (url) => () => {
         setUrlAPI(url);
     };
 
@@ -61,7 +63,7 @@ export const Characters = () => {
             <div className='container'>
                 <div className='row d-flex flex-wrap row-cols-1 row-cols-md-2 row-cols-lg-2 py-2'>
                     {charactersArray.map((char) =>
-                        <Character 
+                        <Character
                             key={char.id}
                             id={char.id}
                             name={char.name}
@@ -84,7 +86,7 @@ export const Characters = () => {
                             </a>
                         </li>)
                     }
-                    {nextPage !== null ?? (
+                    {nextPage !== null && (
 
                         <li className="page-item">
                             <a className="page-link" onClick={linkPageNext(nextPage)} aria-label="Next">
